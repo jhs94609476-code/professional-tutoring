@@ -1,0 +1,850 @@
+/* ==========================================================================
+   Common / Global Styles
+   ========================================================================== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background-color: #ffffff;
+    color: #1e293b;
+}
+
+/* ==========================================================================
+   Section 1: Hero Section (.fixed-hero-1200-dark)
+   ========================================================================== */
+.fixed-hero-1200-dark {
+    width: 100%;
+    background-color: #1e293b;
+    display: flex;
+    justify-content: center;
+    padding: 60px 5%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.hero-inner {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+}
+
+.hero-left {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.hero-left h1 {
+    font-size: clamp(28px, 7.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.3;
+    color: #ffffff;
+    margin: 0 0 20px 0;
+    letter-spacing: -1px;
+    word-break: keep-all;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+}
+
+.hero-left h1 span {
+    color: #ff7675;
+    font-weight: 900;
+}
+
+.force-visible-text {
+    display: block;
+    margin-bottom: 30px;
+}
+
+.force-visible-text span {
+    display: inline-block;
+    font-size: clamp(15px, 4vw, 19px);
+    color: #ffffff;
+    font-weight: 500;
+    line-height: 1.6;
+    word-break: keep-all;
+    text-shadow: 0 0 4px rgba(0,0,0,0.8);
+    letter-spacing: -0.5px;
+}
+
+.hero-btn {
+    display: inline-block;
+    background: #e74c3c;
+    color: #ffffff;
+    padding: 16px 35px;
+    border-radius: 12px;
+    font-size: clamp(16px, 4.5vw, 19px);
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(231, 76, 60, 0.4);
+}
+
+.hero-right {
+    width: 100%;
+    max-width: 440px;
+    box-sizing: border-box;
+}
+
+.hero-right img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    display: block;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+@media screen and (min-width: 1024px) {
+    .fixed-hero-1200-dark { padding: 120px 0; }
+    .hero-inner { flex-direction: row; justify-content: space-between; align-items: center; gap: 5%; }
+    .hero-left { width: 55%; text-align: left; }
+    .force-visible-text { text-align: left; }
+    .hero-left h1 { font-size: 54px; margin-bottom: 30px; }
+    .force-visible-text span { text-shadow: none; color: #cbd5e1; }
+    .hero-right { width: 40%; max-width: 480px; }
+}
+
+/* ==========================================================================
+   Section 2: Certification Detail Section (.tlc-cert-complete-v7)
+   ========================================================================== */
+.tlc-cert-complete-v7 {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 60px 5%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.cert-container-v7 {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.cert-card-v7 {
+    width: 100%;
+    max-width: 400px;
+    background: #f8f9fa;
+    padding: 45px 25px;
+    border-radius: 24px;
+    text-align: center;
+    border: 2px dashed #d1d5db;
+    box-sizing: border-box;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+}
+
+.cert-text-v7 {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.cert-text-v7 h3 {
+    font-size: clamp(24px, 6.5vw, 36px);
+    font-weight: 900;
+    color: #1e293b;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+    letter-spacing: -1px;
+    word-break: keep-all;
+}
+
+.cert-text-v7 p.main-desc {
+    font-size: clamp(15px, 4vw, 18px);
+    color: #475569;
+    margin: 0 0 30px 0;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+.cert-check-v7 {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    text-align: left;
+}
+
+.cert-check-v7 li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: clamp(14px, 3.8vw, 17px);
+    font-weight: 600;
+    color: #334155;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+
+@media screen and (min-width: 1024px) {
+    .tlc-cert-complete-v7 {
+        padding: 100px 0;
+    }
+    .cert-container-v7 {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0;
+    }
+    .cert-card-v7 {
+        flex: 0 0 400px;
+        padding: 55px 30px;
+    }
+    .cert-text-v7 {
+        flex: 1;
+        text-align: left;
+        padding-left: 90px;
+    }
+    .cert-check-v7 {
+        display: block;
+    }
+}
+
+/* ==========================================================================
+   Section 3: Key Competencies Section (#copy-cat-section-3)
+   ========================================================================== */
+#copy-cat-section-3 {
+    width: 100%;
+    background-color: #1e293b;
+    display: flex;
+    justify-content: center;
+    padding: 80px 20px;
+    box-sizing: border-box;
+}
+
+.inner-content-v11 {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title-group {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.red-line {
+    width: 60px;
+    height: 4px;
+    background: #e74c3c;
+    margin: 20px auto;
+}
+
+.strength-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 25px;
+}
+
+.strength-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 45px 25px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 1024px) {
+    .strength-row { flex-direction: row; }
+    .strength-card { flex: 1; }
+}
+
+/* ==========================================================================
+   Section 4: Class Types Section (#method-section-complete)
+   ========================================================================== */
+.method-full-wrap {
+    width: 100%;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.method-inner {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.method-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.method-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 25px;
+}
+
+.method-card-unit {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #eeeeee;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.card-img-box {
+    height: 200px;
+    background-color: #e9ecef;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-body {
+    padding: 30px 20px;
+    text-align: left;
+}
+
+@media screen and (min-width: 1024px) {
+    .method-full-wrap { padding: 100px 0; }
+    .method-header { margin-bottom: 60px; }
+    .method-grid { flex-direction: row; gap: 30px; }
+    .method-card-unit { flex: 1; }
+    .card-img-box { height: 280px; }
+    .card-body { padding: 45px; }
+    .method-card-unit:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+}
+
+/* ==========================================
+   5번 섹션: 과학적 정밀 진단 완벽 반응형 리마스터
+   ========================================== */
+.diag-section-wrap {
+    width: 100%;
+    background-color: #1e293b;
+    padding: 60px 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.diag-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.diag-main-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.diag-flex-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 30px;
+}
+
+.diag-menu-side {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.diag-item-f {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background-color: transparent;
+}
+
+.num-f, .h3-f, .p-f {
+    transition: color 0.3s;
+}
+
+.diag-content-side {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 25px;
+    height: auto;
+    min-height: auto;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.diag-pane-f {
+    position: relative;
+    width: 100%;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    box-sizing: border-box;
+}
+
+.diag-pane-f.active {
+    display: block;
+    opacity: 1;
+}
+
+.pane-img-wrap {
+    width: 100%;
+    height: 220px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.pane-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media screen and (min-width: 1024px) {
+    .diag-section-wrap { padding: 100px 0; }
+    .diag-main-header { margin-bottom: 60px; }
+    .diag-flex-body {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 50px;
+    }
+    .diag-menu-side { width: 30%; }
+    .diag-content-side {
+        width: 70%;
+        padding: 50px;
+        min-height: 600px;
+        border-radius: 40px;
+    }
+    .pane-img-wrap { height: 320px; margin-bottom: 30px; }
+    .diag-item-f:hover { background-color: rgba(255, 255, 255, 0.05); }
+}
+
+/* ==========================================================================
+   Section 6: Satisfaction Guarantee Section (.guarantee-section-v8)
+   ========================================================================== */
+.guarantee-section-v8 {
+    width: 100%;
+    background-color: #f8fafc;
+    padding: 70px 5%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.guarantee-inner-v8 {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.guarantee-title-v8 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.guarantee-cards-v8 {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-items: center;
+}
+
+.guarantee-card {
+    width: 100%;
+    max-width: 500px;
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 24px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+    border: 1px solid #e2e8f0;
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+}
+
+.guarantee-card:hover {
+    transform: translateY(-5px);
+}
+
+.g-icon-box {
+    width: 65px;
+    height: 65px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.g-icon-box.orange { background: #fff7ed; }
+.g-icon-box.blue { background: #eff6ff; }
+
+.g-bottom-label {
+    display: flex;
+    align-items: center;
+}
+
+.g-bottom-label span {
+    width: 20px;
+    height: 3px;
+    margin-right: 12px;
+}
+
+@media screen and (min-width: 1024px) {
+    .guarantee-section-v8 { padding: 100px 0; }
+    .guarantee-title-v8 { margin-bottom: 60px; }
+    .guarantee-cards-v8 { flex-direction: row; justify-content: center; gap: 40px; }
+    .guarantee-card { padding: 50px; }
+}
+
+/* ==========================================================================
+   Section 7: Text Review Section (.text-review-section-v9)
+   ========================================================================== */
+.text-review-section-v9 {
+    width: 100%;
+    background-color: #1e293b;
+    padding: 70px 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.review-title-v9 {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 0 5%;
+}
+
+.infinite-text-container {
+    width: 100%;
+    overflow: hidden;
+    cursor: pointer;
+    touch-action: pan-y;
+}
+
+.text-track-force {
+    display: flex;
+    width: fit-content;
+    gap: 20px;
+    will-change: transform;
+    padding: 20px 0;
+}
+
+.txt-rev-card {
+    flex: 0 0 280px;
+    background-color: #334155;
+    border: 2px solid #60a5fa;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+.txt-rev-card .card-body {
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    min-height: 280px;
+    box-sizing: border-box;
+}
+
+.txt-rev-card .card-content {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    word-break: keep-all;
+}
+
+@media screen and (min-width: 1024px) {
+    .text-review-section-v9 { padding: 120px 0; }
+    .review-title-v9 { margin-bottom: 70px; }
+    .text-track-force { gap: 30px; }
+    .txt-rev-card { flex: 0 0 350px; }
+    .txt-rev-card .card-body { padding: 30px; min-height: 320px; }
+}
+
+/* ==========================================================================
+   Section 8: Curriculum Section (.service-total-section-v10)
+   ========================================================================== */
+.service-total-section-v10 {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 60px 5%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.service-total-inner {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.service-header-v10 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    border-bottom: 3px solid #1e293b;
+    padding-bottom: 20px;
+    gap: 15px;
+    box-sizing: border-box;
+}
+
+.service-cards-v10 {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.service-card-v10 {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 40px 30px;
+    border-radius: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-card-v10:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+.card-dark-v10 { background: #1e293b; }
+.card-light-v10 { background: #f8fafc; border: 1px solid #e2e8f0; }
+
+.grade-list-v10 {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: auto;
+}
+
+.service-footer-banner-v10 {
+    margin-top: 40px;
+    text-align: center;
+    padding: 30px 20px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 1024px) {
+    .service-total-section-v10 { padding: 120px 0; }
+    .service-header-v10 { flex-direction: row; align-items: flex-end; margin-bottom: 60px; }
+    .service-header-v10 .header-right { text-align: right; }
+    .service-cards-v10 { flex-direction: row; gap: 20px; }
+    .service-card-v10 { flex: 1; padding: 50px 40px; }
+    .service-footer-banner-v10 { margin-top: 80px; padding: 40px; }
+}
+
+/* ==========================================
+   Section 9: 무한 양산형 원장 철학 섹션 (구 8.5번)
+   ========================================== */
+#philosophy-section {
+    width: 100%;
+    padding: 90px 20px;
+    background-color: #1e293b;
+    box-sizing: border-box;
+}
+#philosophy-section .container {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+    text-align: left;
+}
+#philosophy-section .sub-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+#philosophy-section .main-title {
+    font-family: 'Pretendard', sans-serif;
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.4;
+    letter-spacing: -1px;
+    margin: 0 0 35px 0;
+    word-break: keep-all;
+}
+#philosophy-section .content-text {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 16px;
+    line-height: 1.85;
+    margin: 0 0 25px 0;
+    color: #cbd5e1;
+    word-break: keep-all;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+}
+#philosophy-section .highlight-text {
+    font-family: 'Pretendard', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffcc00;
+    margin: 35px 0;
+    padding-left: 15px;
+    border-left: 4px solid #ffcc00;
+    line-height: 1.6;
+}
+@media screen and (max-width: 768px) {
+    #philosophy-section { padding: 60px 20px; }
+    #philosophy-section .content-text { font-size: 15px; line-height: 1.8; }
+}
+
+/* ==========================================================================
+   Section 10: Inquiry Section (.tlc-inquiry-section-v12) (구 9번)
+   ========================================================================== */
+.tlc-inquiry-section-v12 {
+    width: 100%;
+    background-color: #1e293b;
+    padding: 80px 5%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.inquiry-container-v12 {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.inquiry-title-v12 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.inquiry-card-v12 {
+    background: #334155;
+    padding: 40px 25px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 1px solid #475569;
+    box-sizing: border-box;
+}
+
+.form-group-v12 {
+    margin-bottom: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.form-group-v12 input, .form-group-v12 select {
+    width: 100%;
+    height: 52px;
+    background: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 16px;
+    color: #1e293b;
+    font-weight: 600;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.25s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.form-group-v12 input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.form-group-v12 input:focus, .form-group-v12 select:focus {
+    background: #f8fafc;
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3);
+}
+
+.select-wrapper-v12 {
+    position: relative;
+    width: 100%;
+}
+
+.select-wrapper-v12::after {
+    content: '▼';
+    font-size: 12px;
+    color: #64748b;
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.submit-btn-v12 {
+    width: 100%;
+    height: 56px;
+    background: #e74c3c;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.25);
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.submit-btn-v12:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.submit-btn-v12:disabled {
+    background: #64748b;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.success-box-v12 {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+@media screen and (min-width: 1024px) {
+    .tlc-inquiry-section-v12 { padding: 120px 0; }
+    .inquiry-title-v12 { margin-bottom: 50px; }
+    .inquiry-card-v12 { padding: 50px 45px; }
+}
