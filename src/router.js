@@ -220,10 +220,10 @@
 (function() {
     let englishData = [];
 
-    // 데이터를 가져오는 함수 (최상위 루트 경로의 ./high-english.json 파일을 다이렉트로 fetch)
+    // 데이터를 가져오는 함수 (최상위 루트 경로의 /high-english.json 파일을 다이렉트로 fetch)
     async function loadData() {
         try {
-            const response = await fetch('./high-english.json');
+            const response = await fetch('/high-english.json');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -231,8 +231,13 @@
             handleRouting();
         } catch (error) {
             console.error("데이터 로드 실패:", error);
-            // 에러 발생 시에도 빈 화면이 뜨지 않도록 Fallback 안전장치 가동
-            showFallback();
+            // 에러 발생 시에도 빈 화면이 뜨지 않도록 window.highEnglishData가 존재하면 이를 할당
+            if (window.highEnglishData && window.highEnglishData.length > 0) {
+                englishData = window.highEnglishData;
+                handleRouting();
+            } else {
+                showFallback();
+            }
         }
     }
 
@@ -240,8 +245,9 @@
     function showFallback() {
         const placeholder = document.getElementById('philosophy-section-placeholder');
         if (placeholder) {
-            if (englishData && englishData.length > 0 && englishData[0]["결과"]) {
-                placeholder.innerHTML = englishData[0]["결과"];
+            const data = (englishData && englishData.length > 0) ? englishData : (window.highEnglishData || []);
+            if (data && data.length > 0 && data[0]["결과"]) {
+                placeholder.innerHTML = data[0]["결과"];
             } else {
                 placeholder.innerHTML = `<div style="text-align:center; padding: 40px; color: #ff7675;">데이터를 불러오는 데 실패했습니다. 관리자에게 문의해 주세요.</div>`;
             }
@@ -251,8 +257,12 @@
     // URL 쿼리 파라미터 k에서 조합키를 읽어 매칭하는 함수
     function handleRouting() {
         if (!englishData || englishData.length === 0) {
-            showFallback();
-            return;
+            if (window.highEnglishData && window.highEnglishData.length > 0) {
+                englishData = window.highEnglishData;
+            } else {
+                showFallback();
+                return;
+            }
         }
 
         try {

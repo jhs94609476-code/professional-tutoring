@@ -3,7 +3,7 @@ const path = require('path');
 
 // 파일 경로 설정
 const csvFilePath = path.join(__dirname, 'high school english.csv');
-const jsonFilePath = path.join(__dirname, '../high-english.json');
+const jsonFilePath = path.join(__dirname, 'high-english.json');
 
 /**
  * RFC 4180 규격을 준수하는 상태 머신 기반의 CSV 파서
