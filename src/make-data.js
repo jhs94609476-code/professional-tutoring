@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 
-// 파일 경로 설정
-const csvFilePath = path.join(__dirname, 'high school english.csv');
-const jsonFilePath = path.join(__dirname, 'high-english.json');
+// 파일 경로 설정 (최상위 루트 경로로 지정)
+const jsonFilePath = path.join(__dirname, '../high-english.json');
+const sheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vStAETGqwhy2ux_FQAzPeS_bPUu_pIk_F7n79vO7LKCgAZ1KYHnqJ37WX5c2Higqtzx8gG6HBq7zouS/pub?gid=806514591&single=true&output=csv';
 
 /**
  * RFC 4180 규격을 준수하는 상태 머신 기반의 CSV 파서
@@ -64,15 +65,44 @@ function parseCSV(csvText) {
     return rows;
 }
 
-function convertCSVToJson() {
-    try {
-        console.log(`CSV 파일 로딩 중: ${csvFilePath}`);
-        if (!fs.existsSync(csvFilePath)) {
-            console.error(`에러: CSV 파일을 찾을 수 없습니다 -> ${csvFilePath}`);
-            return;
-        }
+/**
+ * 리다이렉션을 추적하여 안전하게 CSV 데이터를 비동기 다운로드하는 헬퍼 함수
+ */
+function fetchCSV(url) {
+    return new Promise((resolve, reject) => {
+        const get = (targetUrl) => {
+            https.get(targetUrl, (res) => {
+                const { statusCode } = res;
+                
+                // Redirect 처리
+                if (statusCode >= 300 && statusCode < 400 && res.headers.location) {
+                    return get(res.headers.location);
+                }
+                
+                if (statusCode !== 200) {
+                    reject(new Error(`CSV 다운로드 실패. 상태 코드: ${statusCode}`));
+                    return;
+                }
+                
+                let data = '';
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+                res.on('end', () => {
+                    resolve(data);
+                });
+            }).on('error', (err) => {
+                reject(err);
+            });
+        };
+        get(url);
+    });
+}
 
-        const csvText = fs.readFileSync(csvFilePath, 'utf8');
+async function convertCSVToJson() {
+    try {
+        console.log(`구글 스프레드시트 CSV 데이터를 가져오는 중... URL: ${sheetCsvUrl}`);
+        const csvText = await fetchCSV(sheetCsvUrl);
 
         console.log('정석적인 CSV 파싱 시작...');
         const rows = parseCSV(csvText);
@@ -84,8 +114,11 @@ function convertCSVToJson() {
 
         // 첫 번째 행은 헤더
         const rawHeaders = rows[0];
-        // 헤더명 정제: 공백 트림 및 괄호 깨짐(예: "지역(한글") 보정
-        const headers = rawHeaders.map(header => {
+        // 헤더명 정제: 가장 왼쪽 컬럼(A열)은 "링크"로 지정하고, 공백 트림 및 괄호 깨짐(예: "지역(한글") 보정
+        const headers = rawHeaders.map((header, index) => {
+            if (index === 0) {
+                return '링크';
+            }
             let h = header.trim();
             if (h === '지역(한글') {
                 h = '지역(한글)';

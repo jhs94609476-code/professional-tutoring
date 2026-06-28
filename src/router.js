@@ -220,10 +220,10 @@
 (function() {
     let englishData = [];
 
-    // 데이터를 가져오는 함수 (최상위 루트 경로의 /high-english.json 파일을 다이렉트로 fetch)
+    // 데이터를 가져오는 함수 (최상위 루트 경로의 ./high-english.json 파일을 다이렉트로 fetch)
     async function loadData() {
         try {
-            const response = await fetch('/high-english.json');
+            const response = await fetch('./high-english.json');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -278,13 +278,9 @@
             // 공백을 모두 제거하고 소문자로 변환하여 비교 키 생성
             const cleanK = decodeURIComponent(k).replace(/\s+/g, '').toLowerCase();
 
-            // 2. 데이터 내에서 매칭 수행 (가장 왼쪽 컬럼인 A열의 값을 기준으로 비교)
+            // 2. 데이터 내에서 매칭 수행 (JSON의 '링크' 값을 기준으로 비교)
             let matched = englishData.find(item => {
-                const keys = Object.keys(item);
-                if (keys.length === 0) return false;
-                
-                const firstKey = keys[0]; // 가장 왼쪽에 위치한 링크 컬럼
-                const linkVal = item[firstKey];
+                const linkVal = item["링크"];
                 if (linkVal === undefined || linkVal === null) return false;
 
                 const cleanLink = String(linkVal).replace(/\s+/g, '').toLowerCase();
