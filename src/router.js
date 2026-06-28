@@ -220,16 +220,8 @@
 (function() {
     let englishData = [];
 
-    // 데이터를 가져오는 함수 (하이브리드 방식: 로컬 JS 변수 또는 Fetch API)
+    // 데이터를 가져오는 함수 (최상위 루트 경로의 ./high-english.json 파일을 다이렉트로 fetch)
     async function loadData() {
-        // 1. 이미 index.html에서 high-english-data.js가 로드되어 전역 변수가 존재하는 경우
-        if (window.highEnglishData && window.highEnglishData.length > 0) {
-            englishData = window.highEnglishData;
-            handleRouting();
-            return;
-        }
-
-        // 2. 전역 변수가 없을 경우 (웹 서버 환경) fetch를 사용하여 로드 시도
         try {
             const response = await fetch('./high-english.json');
             if (!response.ok) {
@@ -239,8 +231,18 @@
             handleRouting();
         } catch (error) {
             console.error("데이터 로드 실패:", error);
-            const placeholder = document.getElementById('philosophy-section-placeholder');
-            if (placeholder) {
+            // 에러 발생 시에도 빈 화면이 뜨지 않도록 Fallback 안전장치 가동
+            showFallback();
+        }
+    }
+
+    // 최상단 첫 번째 행의 "결과" 데이터를 화면에 띄워주는 Fallback 안전장치
+    function showFallback() {
+        const placeholder = document.getElementById('philosophy-section-placeholder');
+        if (placeholder) {
+            if (englishData && englishData.length > 0 && englishData[0]["결과"]) {
+                placeholder.innerHTML = englishData[0]["결과"];
+            } else {
                 placeholder.innerHTML = `<div style="text-align:center; padding: 40px; color: #ff7675;">데이터를 불러오는 데 실패했습니다. 관리자에게 문의해 주세요.</div>`;
             }
         }
@@ -248,47 +250,49 @@
 
     // URL 쿼리 파라미터 k에서 조합키를 읽어 매칭하는 함수
     function handleRouting() {
-        if (!englishData || englishData.length === 0) return;
-
-        // 1. URL 쿼리 파라미터에서 'k' 검색
-        const urlParams = new URLSearchParams(window.location.search);
-        let k = urlParams.get('k');
-
-        // 2. k 값이 없으면 기본값은 'high-english-seoul'
-        if (!k) {
-            k = 'high-english-seoul';
+        if (!englishData || englishData.length === 0) {
+            showFallback();
+            return;
         }
 
-        k = decodeURIComponent(k).trim();
+        try {
+            // 1. URL 쿼리 파라미터에서 'k' 검색
+            const urlParams = new URLSearchParams(window.location.search);
+            const k = urlParams.get('k');
 
-        let matched = null;
+            if (!k) {
+                showFallback();
+                return;
+            }
 
-        // 3. 조합키 접두사에 따른 매칭 처리 (현재는 high-english- 접두사 대응)
-        if (k.startsWith('high-english-')) {
-            const region = k.substring('high-english-'.length).trim();
+            // 공백을 모두 제거하고 소문자로 변환하여 비교 키 생성
+            const cleanK = decodeURIComponent(k).replace(/\s+/g, '').toLowerCase();
 
-            // 데이터 내에서 매칭 수행
-            matched = englishData.find(item => {
-                const engMatch = item["지역(영문)"] && item["지역(영문)"].toLowerCase() === region.toLowerCase();
-                const korMatch = item["지역(한글)"] && item["지역(한글)"].trim() === region;
-                return engMatch || korMatch;
+            // 2. 데이터 내에서 매칭 수행 (가장 왼쪽 컬럼인 A열의 값을 기준으로 비교)
+            let matched = englishData.find(item => {
+                const keys = Object.keys(item);
+                if (keys.length === 0) return false;
+                
+                const firstKey = keys[0]; // 가장 왼쪽에 위치한 링크 컬럼
+                const linkVal = item[firstKey];
+                if (linkVal === undefined || linkVal === null) return false;
+
+                const cleanLink = String(linkVal).replace(/\s+/g, '').toLowerCase();
+                return cleanLink === cleanK;
             });
-        }
 
-        const placeholder = document.getElementById('philosophy-section-placeholder');
-        if (placeholder) {
-            if (matched && matched["결과"]) {
-                placeholder.innerHTML = matched["결과"];
-            } else {
-                console.warn(`매칭되는 조합키 데이터를 찾을 수 없습니다: ${k}`);
-                // 기본값 high-english-seoul 데이터로 폴백 시도
-                const fallback = englishData.find(item => item["지역(영문)"].toLowerCase() === 'seoul');
-                if (fallback && fallback["결과"]) {
-                    placeholder.innerHTML = fallback["결과"];
+            const placeholder = document.getElementById('philosophy-section-placeholder');
+            if (placeholder) {
+                if (matched && matched["결과"]) {
+                    placeholder.innerHTML = matched["결과"];
                 } else {
-                    placeholder.innerHTML = `<div style="text-align:center; padding: 40px; color: #64748b;">해당 데이터를 찾을 수 없습니다.</div>`;
+                    console.warn(`매칭되는 조합키 데이터를 찾을 수 없습니다: ${k}`);
+                    showFallback();
                 }
             }
+        } catch (error) {
+            console.error("라우팅 처리 중 에러 발생:", error);
+            showFallback();
         }
     }
 
