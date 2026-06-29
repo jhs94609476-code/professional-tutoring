@@ -1016,3 +1016,13 @@ body {
         padding: 50px 45px;
     }
 }
+
+/* Mobile responsive layout container fix */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        padding: 0 20px;
+    }
+}
