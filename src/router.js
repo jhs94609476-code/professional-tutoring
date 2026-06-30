@@ -49,7 +49,7 @@
                 const p = item.querySelector('.p-f');
                 
                 if(i === index) {
-                    item.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                    item.style.backgroundColor = isMobile ? 'rgba(255, 255, 255, 0.18)' : 'rgba(255, 255, 255, 0.12)';
                     item.style.transform = isMobile ? 'translateX(0)' : 'translateX(15px)';
                     if(num) { num.style.color = '#ffcc00'; num.style.opacity = '1'; }
                     if(h3) { h3.style.color = '#ffcc00'; h3.style.opacity = '1'; }
@@ -61,8 +61,13 @@
                             fPanes[i].classList.add('active');
                         }, 10);
                     }
+
+                    // 모바일에서 활성화된 탭이 가로 스크롤 영역 중앙에 오도록 스크롤
+                    if (isMobile) {
+                        item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
                 } else {
-                    item.style.backgroundColor = 'transparent';
+                    item.style.backgroundColor = isMobile ? 'rgba(255, 255, 255, 0.05)' : 'transparent';
                     item.style.transform = 'translateX(0)';
                     if(num) { num.style.color = '#ffffff'; num.style.opacity = '0.3'; }
                     if(h3) { h3.style.color = '#ffffff'; h3.style.opacity = '0.5'; }

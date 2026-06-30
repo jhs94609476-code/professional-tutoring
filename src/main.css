@@ -528,6 +528,100 @@ body {
 }
 
 /* ==========================================================================
+   Section 5 Mobile Remaster (max-width: 768px)
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+    #diag-final-force-v4 .diag-grid-body {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        padding: 0 !important;
+    }
+
+    #diag-final-force-v4 .diag-menu-side {
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        gap: 10px !important;
+        padding: 5px 0 15px 0 !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important; /* Firefox */
+    }
+
+    #diag-final-force-v4 .diag-menu-side::-webkit-scrollbar {
+        display: none !important; /* Chrome, Safari, Opera, Edge */
+    }
+
+    #diag-final-force-v4 .diag-item-f {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        padding: 10px 16px !important;
+        border-bottom: none !important;
+        border-radius: 30px !important;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        flex-shrink: 0 !important;
+        width: auto !important;
+        margin-right: 0 !important;
+        transform: none !important;
+    }
+
+    #diag-final-force-v4 .num-f {
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        margin-right: 8px !important;
+        writing-mode: horizontal-tb !important;
+    }
+
+    #diag-final-force-v4 .txt-f {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        writing-mode: horizontal-tb !important;
+    }
+
+    #diag-final-force-v4 .h3-f {
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    #diag-final-force-v4 .p-f {
+        font-size: 11px !important;
+        margin-top: 2px !important;
+        white-space: nowrap !important;
+        opacity: 0.7 !important;
+    }
+
+    #diag-final-force-v4 .diag-content-side {
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 24px 20px !important;
+        border-radius: 24px !important;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    #diag-final-force-v4 .pane-img-wrap {
+        height: 180px !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px !important;
+    }
+
+    #diag-final-force-v4 .diag-pane-f > div[style*="font-size: 24px"] {
+        font-size: 18px !important;
+        margin-bottom: 12px !important;
+    }
+
+    #diag-final-force-v4 .diag-pane-f > div[style*="font-size: 16px"] {
+        font-size: 14px !important;
+        padding: 15px !important;
+        line-height: 1.6 !important;
+    }
+}
+
+/* ==========================================================================
    Section 6: Satisfaction Guarantee Section (.guarantee-section-v8)
    ========================================================================== */
 .guarantee-section-v8 {
