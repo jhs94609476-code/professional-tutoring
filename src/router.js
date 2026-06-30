@@ -117,7 +117,7 @@
 })();
 
 // ==========================================
-// Section 11: 단일 쿼리 파라미터(?k=조합키) 라우팅 (★수정됨)
+// Section 11: 단일 쿼리 파라미터(?k=조합키) 라우팅 및 동적 SEO (★수정됨)
 // ==========================================
 (function() {
     let englishData = [];
@@ -135,13 +135,53 @@
         }
     }
 
+    function updateSEO(data) {
+        try {
+            let keyword = '';
+            if (data) {
+                if (data.keyword) {
+                    keyword = data.keyword;
+                } else if (data["키워드"]) {
+                    keyword = data["키워드"];
+                } else {
+                    const region = data.region || data["지역(한글)"] || '';
+                    const subject = data.subject || data["과목"] || '';
+                    keyword = (region + ' ' + subject).trim();
+                }
+            }
+            if (!keyword) {
+                keyword = '전문';
+            }
+
+            // 1. 동적 타이틀(Title) 적용
+            document.title = `${keyword} 전문 강사진 | 1:1 맞춤 수업`;
+
+            // 2. 동적 메타 디스크립션(Meta Description) 적용
+            let metaDesc = document.querySelector('meta[name="description"]');
+            const descriptionText = `검증되지 않은 대학생 과외에 지치셨나요? 초등 흥미유발부터 중고등 내신 역전, 완벽 수능 대비까지 전문 ${keyword} 선생님이 책임집니다. 지금 무료 모의수업을 신청하세요.`;
+            
+            if (metaDesc) {
+                metaDesc.setAttribute('content', descriptionText);
+            } else {
+                metaDesc = document.createElement('meta');
+                metaDesc.setAttribute('name', 'description');
+                metaDesc.setAttribute('content', descriptionText);
+                document.head.appendChild(metaDesc);
+            }
+        } catch (e) {
+            console.error("SEO 업데이트 중 에러 발생:", e);
+        }
+    }
+
     function showFallback() {
         const placeholder = document.getElementById('philosophy-section-placeholder');
         if (placeholder) {
             if (englishData && englishData.length > 0 && englishData[0]["결과"]) {
                 placeholder.innerHTML = englishData[0]["결과"];
+                updateSEO(englishData[0]);
             } else {
                 placeholder.innerHTML = `<div style="text-align:center; padding: 40px; color: #ff7675;">데이터를 불러오는 데 실패했습니다. 관리자에게 문의해 주세요.</div>`;
+                updateSEO(null);
             }
         }
     }
@@ -173,6 +213,7 @@
             if (placeholder) {
                 if (matched && matched["결과"]) {
                     placeholder.innerHTML = matched["결과"];
+                    updateSEO(matched);
                 } else {
                     showFallback();
                 }
