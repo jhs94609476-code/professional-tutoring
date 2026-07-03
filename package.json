@@ -1,0 +1,8 @@
+{
+  "name": "tutoring",
+  "version": "1.0.0",
+  "description": "TLC Professional Tutoring Web Generator",
+  "scripts": {
+    "build": "node src/make-data.js"
+  }
+}
