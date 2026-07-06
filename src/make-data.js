@@ -237,6 +237,7 @@ async function convertCSVToJson() {
 
     } catch (error) {
         console.error('변환 중 에러 발생:', error);
+        process.exit(1);
     }
 }
 
