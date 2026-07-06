@@ -123,10 +123,17 @@ async function convertCSVToJson() {
         // 2. public 폴더 비우고 생성
         console.log('public 폴더 초기화 중...');
         const publicDir = path.join(__dirname, '..', 'public');
-        if (fs.existsSync(publicDir)) {
-            fs.rmSync(publicDir, { recursive: true, force: true });
+        if (!fs.existsSync(publicDir)) {
+            fs.mkdirSync(publicDir, { recursive: true });
+        } else {
+            // Vercel 빌드 환경에서 public 폴더 자체를 rmSync로 삭제하면 경로 추적(Inode) 유실이 발생할 수 있습니다.
+            // 따라서 폴더 자체는 유지한 채, 내부의 파일과 폴더들만 깨끗이 비워줍니다.
+            const files = fs.readdirSync(publicDir);
+            for (const file of files) {
+                const filePath = path.join(publicDir, file);
+                fs.rmSync(filePath, { recursive: true, force: true });
+            }
         }
-        fs.mkdirSync(publicDir, { recursive: true });
 
         // 3. static 자산 복사
         console.log('static 자산 복사 중...');
