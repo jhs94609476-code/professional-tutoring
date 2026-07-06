@@ -120,13 +120,13 @@ async function convertCSVToJson() {
         fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2), 'utf8');
         console.log('JSON 변환 및 파일 저장 성공!');
 
-        // 2. public 폴더 비우고 생성
-        console.log('public 폴더 초기화 중...');
-        const publicDir = path.join(__dirname, '..', 'public');
+        // 2. dist 폴더 비우고 생성 (Inode 유실 방지 로직 도입)
+        console.log('dist 폴더 초기화 중...');
+        const publicDir = path.join(__dirname, '..', 'dist');
         if (!fs.existsSync(publicDir)) {
             fs.mkdirSync(publicDir, { recursive: true });
         } else {
-            // Vercel 빌드 환경에서 public 폴더 자체를 rmSync로 삭제하면 경로 추적(Inode) 유실이 발생할 수 있습니다.
+            // Vercel 빌드 환경에서 dist 폴더 자체를 rmSync로 삭제하면 경로 추적(Inode) 유실이 발생할 수 있습니다.
             // 따라서 폴더 자체는 유지한 채, 내부의 파일과 폴더들만 깨끗이 비워줍니다.
             const files = fs.readdirSync(publicDir);
             for (const file of files) {
