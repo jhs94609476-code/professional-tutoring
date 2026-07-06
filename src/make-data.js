@@ -3,7 +3,7 @@ const path = require('path');
 const https = require('https');
 
 // ★ 수정됨: 파일을 바깥이 아니라 현재 폴더(src)에 정확히 저장합니다.
-const jsonFilePath = path.join(__dirname, 'high-english.json');
+const jsonFilePath = path.resolve(__dirname, 'high-english.json');
 const sheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vStAETGqwhy2ux_FQAzPeS_bPUu_pIk_F7n79vO7LKCgAZ1KYHnqJ37WX5c2Higqtzx8gG6HBq7zouS/pub?gid=806514591&single=true&output=csv';
 
 function parseCSV(csvText) {
@@ -122,7 +122,7 @@ async function convertCSVToJson() {
 
         // 2. dist 폴더 비우고 생성 (Inode 유실 방지 로직 도입)
         console.log('dist 폴더 초기화 중...');
-        const publicDir = path.join(__dirname, '..', 'dist');
+        const publicDir = path.resolve(__dirname, '../dist');
         if (!fs.existsSync(publicDir)) {
             fs.mkdirSync(publicDir, { recursive: true });
         } else {
@@ -137,25 +137,25 @@ async function convertCSVToJson() {
 
         // 3. static 자산 복사
         console.log('static 자산 복사 중...');
-        fs.copyFileSync(path.join(__dirname, 'main.css'), path.join(publicDir, 'main.css'));
-        fs.copyFileSync(path.join(__dirname, 'router.js'), path.join(publicDir, 'router.js'));
+        fs.copyFileSync(path.resolve(__dirname, 'main.css'), path.resolve(publicDir, 'main.css'));
+        fs.copyFileSync(path.resolve(__dirname, 'router.js'), path.resolve(publicDir, 'router.js'));
         
-        const imagesSrc = path.join(__dirname, 'images');
+        const imagesSrc = path.resolve(__dirname, 'images');
         if (fs.existsSync(imagesSrc)) {
-            copyDirSync(imagesSrc, path.join(publicDir, 'images'));
+            copyDirSync(imagesSrc, path.resolve(publicDir, 'images'));
         }
 
         // rss.xml 복사 및 가공 (/?k= -> /)
-        const rssSrcPath = path.join(__dirname, 'rss.xml');
+        const rssSrcPath = path.resolve(__dirname, 'rss.xml');
         if (fs.existsSync(rssSrcPath)) {
             let rssContent = fs.readFileSync(rssSrcPath, 'utf8');
             rssContent = rssContent.replace(/\/\?k=/g, '/');
-            fs.writeFileSync(path.join(publicDir, 'rss.xml'), rssContent, 'utf8');
+            fs.writeFileSync(path.resolve(publicDir, 'rss.xml'), rssContent, 'utf8');
         }
 
         // 4. index.html 템플릿 처리 (경로를 절대경로로 수정)
         console.log('HTML 템플릿 처리 중...');
-        const templatePath = path.join(__dirname, 'index.html');
+        const templatePath = path.resolve(__dirname, 'index.html');
         let templateHtml = fs.readFileSync(templatePath, 'utf8');
         
         // 경로 치환
@@ -187,9 +187,9 @@ async function convertCSVToJson() {
                 .replace(/<meta name="description" content=".*?"/g, () => `<meta name="description" content="${description}"`)
                 .replace(/<div id="philosophy-section-placeholder"><\/div>/g, () => `<div id="philosophy-section-placeholder">${resultHtml}</div>`);
 
-            const pageDir = path.join(publicDir, linkKey);
+            const pageDir = path.resolve(publicDir, linkKey);
             fs.mkdirSync(pageDir, { recursive: true });
-            fs.writeFileSync(path.join(pageDir, 'index.html'), pageHtml, 'utf8');
+            fs.writeFileSync(path.resolve(pageDir, 'index.html'), pageHtml, 'utf8');
 
             count++;
             if (count % 1000 === 0) {
@@ -214,7 +214,7 @@ async function convertCSVToJson() {
             .replace(/<meta name="description" content=".*?"/g, () => `<meta name="description" content="${description}"`)
             .replace(/<div id="philosophy-section-placeholder"><\/div>/g, () => `<div id="philosophy-section-placeholder">${resultHtml}</div>`);
 
-        fs.writeFileSync(path.join(publicDir, 'index.html'), homeHtml, 'utf8');
+        fs.writeFileSync(path.resolve(publicDir, 'index.html'), homeHtml, 'utf8');
 
         // 7. sitemap.xml 동적 생성
         console.log('sitemap.xml 생성 중...');
@@ -239,7 +239,7 @@ async function convertCSVToJson() {
             sitemapContent += `  </url>\n`;
         }
         sitemapContent += `</urlset>\n`;
-        fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapContent, 'utf8');
+        fs.writeFileSync(path.resolve(publicDir, 'sitemap.xml'), sitemapContent, 'utf8');
         console.log('sitemap.xml 생성 및 저장 성공!');
 
     } catch (error) {
