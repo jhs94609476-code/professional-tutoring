@@ -10,6 +10,5 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/$1/index.html" }
-  ],
-  "cleanUrls": true
+  ]
 }
