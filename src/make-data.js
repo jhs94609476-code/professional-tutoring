@@ -90,6 +90,52 @@ function copyDirSync(src, dest) {
     }
 }
 
+function extractH2Text(html, fallbackKeyword) {
+    if (!html) return `${fallbackKeyword} 전문 강사진 | 1:1 맞춤 수업`;
+    const match = html.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i);
+    if (match && match[1]) {
+        const cleanText = match[1].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        if (cleanText) return cleanText;
+    }
+    return `${fallbackKeyword} 전문 강사진 | 1:1 맞춤 수업`;
+}
+
+function extractDescription(html, fallbackKeyword) {
+    if (!html) {
+        return `검증되지 않은 대학생 과외에 지치셨나요? 초등 흥미유발부터 중고등 내신 역전, 완벽 수능 대비까지 전문 ${fallbackKeyword} 선생님이 책임집니다. 지금 무료 모의수업을 신청하세요.`;
+    }
+    let cleanText = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    if (cleanText.length > 130) {
+        cleanText = cleanText.substring(0, 130) + '...';
+    }
+    return cleanText || `검증되지 않은 대학생 과외에 지치셨나요? 초등 흥미유발부터 중고등 내신 역전, 완벽 수능 대비까지 전문 ${fallbackKeyword} 선생님이 책임집니다. 지금 무료 모의수업을 신청하세요.`;
+}
+
+function injectMetaAndContent(templateHtml, title, description, resultHtml) {
+    // 1. 기존 <title> 및 description <meta> 태그 제거
+    let cleanHtml = templateHtml
+        .replace(/<title>[\s\S]*?<\/title>/gi, '')
+        .replace(/<meta\s+[^>]*?name=["']description["'][^>]*?>/gi, '')
+        .replace(/<meta\s+[^>]*?content=["'][\s\S]*?["']\s+[^>]*?name=["']description["'][^>]*?>/gi, '');
+
+    // 2. 새로운 태그 생성 및 주입
+    const titleTag = `<title>${title}</title>`;
+    const descTag = `<meta name="description" content="${description}">`;
+    const newTags = `\n    ${titleTag}\n    ${descTag}`;
+
+    let pageHtml;
+    if (/<head[^>]*>/i.test(cleanHtml)) {
+        pageHtml = cleanHtml.replace(/(<head[^>]*>)/i, `$1${newTags}`);
+    } else {
+        pageHtml = newTags + '\n' + cleanHtml;
+    }
+
+    // 3. 본문 결과 HTML 주입 (philosophy-section-placeholder 치환)
+    pageHtml = pageHtml.replace(/<div id="philosophy-section-placeholder"><\/div>/g, () => `<div id="philosophy-section-placeholder">${resultHtml}</div>`);
+
+    return pageHtml;
+}
+
 async function convertCSVToJson() {
     try {
         console.log(`구글 스프레드시트 CSV 데이터를 가져오는 중...`);
@@ -177,15 +223,14 @@ async function convertCSVToJson() {
             const subject = item["과목"] || '';
             const keyword = (region + ' ' + subject).trim() || '전문';
 
-            const title = `${keyword} 전문 강사진 | 1:1 맞춤 수업`;
-            const description = `검증되지 않은 대학생 과외에 지치셨나요? 초등 흥미유발부터 중고등 내신 역전, 완벽 수능 대비까지 전문 ${keyword} 선생님이 책임집니다. 지금 무료 모의수업을 신청하세요.`;
             const resultHtml = item["결과"] || '';
 
-            // 템플릿 채우기 (특수 문자 $ 오동작 방지를 위해 함수 형태 활용)
-            let pageHtml = templateHtml
-                .replace(/<title>.*?<\/title>/g, () => `<title>${title}</title>`)
-                .replace(/<meta name="description" content=".*?"/g, () => `<meta name="description" content="${description}"`)
-                .replace(/<div id="philosophy-section-placeholder"><\/div>/g, () => `<div id="philosophy-section-placeholder">${resultHtml}</div>`);
+            // 본문 내용을 활용해 고유한 title과 description을 동적으로 추출
+            const title = extractH2Text(resultHtml, keyword);
+            const description = extractDescription(resultHtml, keyword);
+
+            // 템플릿에 타이틀과 메타설명 주입 (누락 방지 예외 처리 포함)
+            const pageHtml = injectMetaAndContent(templateHtml, title, description, resultHtml);
 
             const pageDir = path.resolve(publicDir, linkKey);
             fs.mkdirSync(pageDir, { recursive: true });
@@ -205,14 +250,12 @@ async function convertCSVToJson() {
         const subject = firstItem["과목"] || '';
         const keyword = (region + ' ' + subject).trim() || '전문';
 
-        const title = `${keyword} 전문 강사진 | 1:1 맞춤 수업`;
-        const description = `검증되지 않은 대학생 과외에 지치셨나요? 초등 흥미유발부터 중고등 내신 역전, 완벽 수능 대비까지 전문 ${keyword} 선생님이 책임집니다. 지금 무료 모의수업을 신청하세요.`;
         const resultHtml = firstItem["결과"] || '';
 
-        let homeHtml = templateHtml
-            .replace(/<title>.*?<\/title>/g, () => `<title>${title}</title>`)
-            .replace(/<meta name="description" content=".*?"/g, () => `<meta name="description" content="${description}"`)
-            .replace(/<div id="philosophy-section-placeholder"><\/div>/g, () => `<div id="philosophy-section-placeholder">${resultHtml}</div>`);
+        const title = extractH2Text(resultHtml, keyword);
+        const description = extractDescription(resultHtml, keyword);
+
+        const homeHtml = injectMetaAndContent(templateHtml, title, description, resultHtml);
 
         fs.writeFileSync(path.resolve(publicDir, 'index.html'), homeHtml, 'utf8');
 
