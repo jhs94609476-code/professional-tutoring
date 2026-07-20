@@ -186,6 +186,12 @@ async function convertCSVToJson() {
         fs.copyFileSync(path.resolve(__dirname, 'main.css'), path.resolve(publicDir, 'main.css'));
         fs.copyFileSync(path.resolve(__dirname, 'router.js'), path.resolve(publicDir, 'router.js'));
         
+        // robots.txt 복사
+        const robotsSrcPath = path.resolve(__dirname, 'robots.txt');
+        if (fs.existsSync(robotsSrcPath)) {
+            fs.copyFileSync(robotsSrcPath, path.resolve(publicDir, 'robots.txt'));
+        }
+        
         const imagesSrc = path.resolve(__dirname, 'images');
         if (fs.existsSync(imagesSrc)) {
             copyDirSync(imagesSrc, path.resolve(publicDir, 'images'));
