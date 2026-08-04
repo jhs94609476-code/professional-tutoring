@@ -112,16 +112,22 @@ function extractDescription(html, fallbackKeyword) {
 }
 
 function injectMetaAndContent(templateHtml, title, description, resultHtml) {
-    // 1. 기존 <title> 및 description <meta> 태그 제거
+    // 1. 기존 <title>, description, og:title, og:description 태그 제거
     let cleanHtml = templateHtml
         .replace(/<title>[\s\S]*?<\/title>/gi, '')
         .replace(/<meta\s+[^>]*?name=["']description["'][^>]*?>/gi, '')
-        .replace(/<meta\s+[^>]*?content=["'][\s\S]*?["']\s+[^>]*?name=["']description["'][^>]*?>/gi, '');
+        .replace(/<meta\s+[^>]*?content=["'][\s\S]*?["']\s+[^>]*?name=["']description["'][^>]*?>/gi, '')
+        .replace(/<meta\s+[^>]*?property=["']og:title["'][^>]*?>/gi, '')
+        .replace(/<meta\s+[^>]*?content=["'][\s\S]*?["']\s+[^>]*?property=["']og:title["'][^>]*?>/gi, '')
+        .replace(/<meta\s+[^>]*?property=["']og:description["'][^>]*?>/gi, '')
+        .replace(/<meta\s+[^>]*?content=["'][\s\S]*?["']\s+[^>]*?property=["']og:description["'][^>]*?>/gi, '');
 
     // 2. 새로운 태그 생성 및 주입
     const titleTag = `<title>${title}</title>`;
     const descTag = `<meta name="description" content="${description}">`;
-    const newTags = `\n    ${titleTag}\n    ${descTag}`;
+    const ogTitleTag = `<meta property="og:title" content="${title}">`;
+    const ogDescTag = `<meta property="og:description" content="${description}">`;
+    const newTags = `\n    ${titleTag}\n    ${descTag}\n    ${ogTitleTag}\n    ${ogDescTag}`;
 
     let pageHtml;
     if (/<head[^>]*>/i.test(cleanHtml)) {
@@ -191,6 +197,18 @@ async function convertCSVToJson() {
         if (fs.existsSync(robotsSrcPath)) {
             fs.copyFileSync(robotsSrcPath, path.resolve(publicDir, 'robots.txt'));
         }
+
+        // favicon.png 복사
+        const faviconSrcPath = path.resolve(__dirname, 'favicon.png');
+        if (fs.existsSync(faviconSrcPath)) {
+            fs.copyFileSync(faviconSrcPath, path.resolve(publicDir, 'favicon.png'));
+        }
+
+        // og-image.png 복사
+        const ogImageSrcPath = path.resolve(__dirname, 'og-image.png');
+        if (fs.existsSync(ogImageSrcPath)) {
+            fs.copyFileSync(ogImageSrcPath, path.resolve(publicDir, 'og-image.png'));
+        }
         
         const imagesSrc = path.resolve(__dirname, 'images');
         if (fs.existsSync(imagesSrc)) {
@@ -214,6 +232,7 @@ async function convertCSVToJson() {
         templateHtml = templateHtml
             .replace(/href="main\.css"/g, 'href="/main.css"')
             .replace(/src="router\.js"/g, 'src="/router.js"')
+            .replace(/href="favicon\.png"/g, 'href="/favicon.png"')
             .replace(/src="images\//g, 'src="/images/')
             .replace(/url\('images\//g, "url('/images/")
             .replace(/url\("images\//g, 'url("/images/');
