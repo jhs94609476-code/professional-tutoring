@@ -111,7 +111,7 @@ function extractDescription(html, fallbackKeyword) {
     return cleanText || `검증되지 않은 대학생 과외에 지치셨나요? 초등 흥미유발부터 중고등 내신 역전, 완벽 수능 대비까지 전문 ${fallbackKeyword} 선생님이 책임집니다. 지금 무료 모의수업을 신청하세요.`;
 }
 
-function injectMetaAndContent(templateHtml, title, description, resultHtml) {
+function injectMetaAndContent(templateHtml, title, description, resultHtml, sourceValue) {
     // 1. 기존 <title>, description, og:title, og:description 태그 제거
     let cleanHtml = templateHtml
         .replace(/<title>[\s\S]*?<\/title>/gi, '')
@@ -138,6 +138,14 @@ function injectMetaAndContent(templateHtml, title, description, resultHtml) {
 
     // 3. 본문 결과 HTML 주입 (philosophy-section-placeholder 치환)
     pageHtml = pageHtml.replace(/<div id="philosophy-section-placeholder"><\/div>/g, () => `<div id="philosophy-section-placeholder">${resultHtml}</div>`);
+
+    // 4. 유입경로(source) hidden input value 치환
+    if (sourceValue) {
+        pageHtml = pageHtml.replace(
+            /(<input[^>]*?name=["']source["'][^>]*?value=["'])[^"']*(["'][^>]*>)/i,
+            `$1${sourceValue}$2`
+        );
+    }
 
     return pageHtml;
 }
@@ -237,11 +245,13 @@ async function convertCSVToJson() {
             .replace(/url\('images\//g, "url('/images/")
             .replace(/url\("images\//g, 'url("/images/');
 
-        // 5. 9,377개 페이지 개별 생성
-        console.log('개별 HTML 페이지 생성 시작 (약 9,300개)...');
+        // 5. 개별 페이지 생성
+        console.log('개별 HTML 페이지 생성 시작...');
         let count = 0;
+        let hasMainRow = false; // A열=index 또는 B열=main인 행이 있는지 추적
         for (const item of jsonData) {
-            const linkKey = item["링크"];
+            const linkKey = (item["링크"] || '').trim();
+            const regionEn = (item["지역 영문"] || item["지역영문"] || '').trim();
             if (!linkKey) continue;
 
             const region = item["지역(한글)"] || '';
@@ -254,8 +264,21 @@ async function convertCSVToJson() {
             const title = extractH2Text(resultHtml, keyword);
             const description = extractDescription(resultHtml, keyword);
 
-            // 템플릿에 타이틀과 메타설명 주입 (누락 방지 예외 처리 포함)
-            const pageHtml = injectMetaAndContent(templateHtml, title, description, resultHtml);
+            // ★ 메인 랜딩페이지 분기: A열=index 이거나 B열=main이면 dist/index.html로 직접 생성
+            const isMainPage = (linkKey.toLowerCase() === 'index') || (regionEn.toLowerCase() === 'main');
+
+            if (isMainPage) {
+                hasMainRow = true;
+                const pageHtml = injectMetaAndContent(templateHtml, title, description, resultHtml, '파워링크');
+                fs.writeFileSync(path.resolve(publicDir, 'index.html'), pageHtml, 'utf8');
+                console.log(`메인 랜딩페이지(dist/index.html) 생성 완료! (유입경로: 파워링크)`);
+                count++;
+                continue;
+            }
+
+            // ★ 일반 서브 페이지: 한글 지역명이 있으면 그 값, 없으면 '오가닉'
+            const sourceValue = region.trim() || '오가닉';
+            const pageHtml = injectMetaAndContent(templateHtml, title, description, resultHtml, sourceValue);
 
             const pageDir = path.resolve(publicDir, linkKey);
             fs.mkdirSync(pageDir, { recursive: true });
@@ -266,23 +289,27 @@ async function convertCSVToJson() {
                 console.log(`.. ${count}개 생성 완료`);
             }
         }
-        console.log(`총 ${count}개의 개별 페이지 생성 완료!`);
+        console.log(`총 ${count}개의 개별 페이지 생성 완료! (메인 분기 포함)`);
 
-        // 6. 메인 홈 index.html 생성 (첫 번째 행 데이터로 pre-render)
-        console.log('메인 홈 index.html 생성 중...');
-        const firstItem = jsonData[0] || {};
-        const region = firstItem["지역(한글)"] || '';
-        const subject = firstItem["과목"] || '';
-        const keyword = (region + ' ' + subject).trim() || '전문';
+        // 6. 메인 홈 index.html 생성 (시트에 index/main 행이 없을 때만 첫 번째 행으로 pre-render)
+        if (!hasMainRow) {
+            console.log('시트에 메인 행 없음 → 첫 번째 행 데이터로 dist/index.html 생성 중...');
+            const firstItem = jsonData[0] || {};
+            const region = firstItem["지역(한글)"] || '';
+            const subject = firstItem["과목"] || '';
+            const keyword = (region + ' ' + subject).trim() || '전문';
 
-        const resultHtml = firstItem["결과"] || '';
+            const resultHtml = firstItem["결과"] || '';
 
-        const title = extractH2Text(resultHtml, keyword);
-        const description = extractDescription(resultHtml, keyword);
+            const title = extractH2Text(resultHtml, keyword);
+            const description = extractDescription(resultHtml, keyword);
 
-        const homeHtml = injectMetaAndContent(templateHtml, title, description, resultHtml);
+            const homeHtml = injectMetaAndContent(templateHtml, title, description, resultHtml, '오가닉');
 
-        fs.writeFileSync(path.resolve(publicDir, 'index.html'), homeHtml, 'utf8');
+            fs.writeFileSync(path.resolve(publicDir, 'index.html'), homeHtml, 'utf8');
+        } else {
+            console.log('메인 랜딩페이지는 시트 index/main 행에서 이미 생성됨 (스텝 6 건너뜀).');
+        }
 
         // 7. sitemap.xml 동적 생성
         console.log('sitemap.xml 생성 중...');
