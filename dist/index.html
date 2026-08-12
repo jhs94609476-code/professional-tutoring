@@ -671,22 +671,33 @@
 
             var btn = document.getElementById('submitBtn');
 
-            // ★ form.reset() 전에 모든 값 캡처
-            var formData = new FormData(form);
+            // ★ 입력 필드 값 1:1 매핑 추출
+            var nameVal = (form.querySelector('[name="name"]') || {}).value || '';
+            var telVal = (form.querySelector('[name="tel"]') || {}).value || '';
+            var gradeVal = (form.querySelector('[name="grade"]') || {}).value || '';
+            var subjectVal = (form.querySelector('[name="subject"]') || {}).value || '';
+            var locationVal = (form.querySelector('[name="location"]') || {}).value || '';
 
             // source 값 명시 보장 (파워링크 고정)
             var sourceEl = document.getElementById('source-input');
             var sourceVal = (sourceEl && sourceEl.value) ? sourceEl.value : '파워링크';
-            formData.set('source', sourceVal);
 
-            var params = new URLSearchParams(formData).toString();
+            // ★ Apps Script 규격 1:1 파라미터 생성
+            var params = new URLSearchParams({
+                name: nameVal,
+                tel: telVal,
+                grade: gradeVal,
+                subject: subjectVal,
+                location: locationVal,
+                source: sourceVal
+            }).toString();
 
             alert('상담 신청이 완료되었습니다! 확인 후 즉시 연락드릴게요.');
             if (btn) { btn.innerText = '전송 완료!'; btn.disabled = true; }
             form.reset();
 
-            // ★ CPC 전용 앱스 스크립트 URL (기존 서브 페이지 URL과 완전 별개)
-            fetch('https://script.google.com/macros/s/AKfycbyHx1xght66lKyDwVaatiqunopQ2kET1dufrbeVFKs5LpDs_1b7oUZlHat8cwUHDJBA/exec', {
+            // ★ 새로운 CPC 전용 앱스 스크립트 웹 앱 URL
+            fetch('https://script.google.com/macros/s/AKfycbxiR--kQnni3jjXWrDmdNeFkQ0d7M78_xuQKCHXSs5lNO3Y0yKdm_OdMEp4jj4AvjYT/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
