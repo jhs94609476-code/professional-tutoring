@@ -98,17 +98,34 @@
         const form = document.getElementById('myGSSForm');
         if (!form) return;
         form.addEventListener('submit', function(e) {
-            e.preventDefault(); 
+            e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const url = "https://script.google.com/macros/s/AKfycbyOqAm7KIOMEu4oBTSVzjBhHgKyE4-9WHjb6coU_swSSFUlAz9L4YDsw5mWTUxcmLog/exec";
+
+            // ★ form.reset() 전에 모든 값을 먼저 캡처 (source 누락 방지)
             const formData = new FormData(form);
+
+            // ★ source 값이 빈 경우 폴백 처리: 페이지 hidden input 직접 조회
+            const sourceEl = document.getElementById('source-input');
+            const sourceVal = (sourceEl && sourceEl.value) ? sourceEl.value : '오가닉';
+            formData.set('source', sourceVal);
+
             const params = new URLSearchParams(formData).toString();
+
             alert('상담 신청이 완료되었습니다! 확인 후 즉시 연락드릴게요.');
-            if(btn) { btn.innerText = "전송 완료!"; btn.disabled = true; }
-            form.reset();
-            fetch(url + "?" + params, { method: 'GET', mode: 'no-cors' });
-            setTimeout(function(){
-                if(btn) { btn.innerText = "무료 상담 및 모의수업 신청하기"; btn.disabled = false; }
+            if (btn) { btn.innerText = "전송 완료!"; btn.disabled = true; }
+            form.reset(); // reset은 fetch 전송 후에도 params에 영향 없음
+
+            // ★ POST 방식으로 전환 (Apps Script doPost 와 호환)
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params
+            });
+
+            setTimeout(function() {
+                if (btn) { btn.innerText = "무료 상담 및 모의수업 신청하기"; btn.disabled = false; }
             }, 3000);
         });
     }
