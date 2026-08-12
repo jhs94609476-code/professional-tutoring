@@ -100,24 +100,62 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            const url = "https://script.google.com/macros/s/AKfycbyOqAm7KIOMEu4oBTSVzjBhHgKyE4-9WHjb6coU_swSSFUlAz9L4YDsw5mWTUxcmLog/exec";
 
-            // ★ form.reset() 전에 모든 값을 먼저 캡처 (source 누락 방지)
-            const formData = new FormData(form);
-
-            // ★ source 값이 빈 경우 폴백 처리: 페이지 hidden input 직접 조회
+            // ★ form.reset() 전에 모든 입력값 1:1 명시 캡처
+            const nameVal = (form.querySelector('[name="name"]') || {}).value || '';
+            const telVal = (form.querySelector('[name="tel"]') || {}).value || '';
+            const gradeVal = (form.querySelector('[name="grade"]') || {}).value || '';
+            const subjectVal = (form.querySelector('[name="subject"]') || {}).value || '';
+            const rawLocationVal = (form.querySelector('[name="location"]') || {}).value || '';
             const sourceEl = document.getElementById('source-input');
-            const sourceVal = (sourceEl && sourceEl.value) ? sourceEl.value : '오가닉';
-            formData.set('source', sourceVal);
+            const sourceInputVal = (sourceEl && sourceEl.value) ? sourceEl.value.trim() : '';
 
-            const params = new URLSearchParams(formData).toString();
+            // URL 쿼리 파라미터 (?source= 또는 ?utm_source=)
+            const urlParams = new URLSearchParams(window.location.search);
+            const querySource = urlParams.get('source') || urlParams.get('utm_source');
+
+            // 메인 / 유료마케팅(CPC) 페이지 여부 판단
+            const pathname = window.location.pathname.replace(/\/$/, '');
+            const isMainOrCPC = (sourceInputVal === '파워링크') || 
+                                (pathname === '' || pathname === '/index.html') || 
+                                !!querySource;
+
+            let targetUrl = "";
+            let finalLocation = rawLocationVal;
+            let finalSource = sourceInputVal;
+
+            if (isMainOrCPC) {
+                // 메인 / 유료마케팅 전용 CPC 앱스 스크립트 URL
+                targetUrl = "https://script.google.com/macros/s/AKfycbxiR--kQnni3jjXWrDmdNeFkQ0d7M78_xuQKCHXSs5lNO3Y0yKdm_OdMEp4jj4AvjYT/exec";
+                
+                // 쿼리 파라미터가 있으면 해당 값 사용, 없으면 기본값 '파워링크'
+                const cpcSource = querySource ? querySource.trim() : '파워링크';
+                finalSource = cpcSource;
+
+                // location 전송 시 '입력받은지역 (유입경로)' 형태로 결합
+                finalLocation = rawLocationVal ? `${rawLocationVal} (${cpcSource})` : `(${cpcSource})`;
+            } else {
+                // 9,000개 하위 페이지 전용 기존 앱스 스크립트 URL 및 로직 100% 보존
+                targetUrl = "https://script.google.com/macros/s/AKfycbyOqAm7KIOMEu4oBTSVzjBhHgKyE4-9WHjb6coU_swSSFUlAz9L4YDsw5mWTUxcmLog/exec";
+                finalSource = sourceInputVal || '오가닉';
+                finalLocation = rawLocationVal;
+            }
+
+            // 1:1 파라미터 규격 생성
+            const params = new URLSearchParams({
+                name: nameVal,
+                tel: telVal,
+                grade: gradeVal,
+                subject: subjectVal,
+                location: finalLocation,
+                source: finalSource
+            }).toString();
 
             alert('상담 신청이 완료되었습니다! 확인 후 즉시 연락드릴게요.');
             if (btn) { btn.innerText = "전송 완료!"; btn.disabled = true; }
-            form.reset(); // reset은 fetch 전송 후에도 params에 영향 없음
+            form.reset();
 
-            // ★ POST 방식으로 전환 (Apps Script doPost 와 호환)
-            fetch(url, {
+            fetch(targetUrl, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

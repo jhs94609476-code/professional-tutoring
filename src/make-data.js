@@ -191,7 +191,11 @@ async function convertCSVToJson() {
             const files = fs.readdirSync(publicDir);
             for (const file of files) {
                 const filePath = path.join(publicDir, file);
-                fs.rmSync(filePath, { recursive: true, force: true });
+                try {
+                    fs.rmSync(filePath, { recursive: true, force: true });
+                } catch (e) {
+                    // Windows 잠김 문제 시 무시하고 진행
+                }
             }
         }
 
