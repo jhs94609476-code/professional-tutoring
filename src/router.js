@@ -99,11 +99,21 @@
         if (!form) return;
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // 입력된 이름(name)과 연락처(tel) 값 검증 (trim 기준)
+            const nameEl = form.querySelector('[name="name"]');
+            const telEl = form.querySelector('[name="tel"]');
+            const nameVal = nameEl ? nameEl.value.trim() : '';
+            const telVal = telEl ? telEl.value.trim() : '';
+
+            if (!nameVal || !telVal) {
+                alert("이름과 연락처를 입력해 주세요.");
+                return;
+            }
+
             const btn = document.getElementById('submitBtn');
 
             // ★ form.reset() 전에 모든 입력값 1:1 명시 캡처
-            const nameVal = (form.querySelector('[name="name"]') || {}).value || '';
-            const telVal = (form.querySelector('[name="tel"]') || {}).value || '';
             const gradeVal = (form.querySelector('[name="grade"]') || {}).value || '';
             const subjectVal = (form.querySelector('[name="subject"]') || {}).value || '';
             const rawLocationVal = (form.querySelector('[name="location"]') || {}).value || '';
@@ -141,7 +151,7 @@
                 finalLocation = rawLocationVal;
             }
 
-            // 1:1 파라미터 규격 생성
+            // 1:1 파라미터 규격 생성 (100% 완료)
             const params = new URLSearchParams({
                 name: nameVal,
                 tel: telVal,
